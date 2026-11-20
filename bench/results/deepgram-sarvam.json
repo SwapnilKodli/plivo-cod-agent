@@ -1,0 +1,167 @@
+{
+  "summary": {
+    "pipeline": "deepgram-sarvam",
+    "turns": 18,
+    "response_p50_ms": 1778,
+    "response_p90_ms": 2839,
+    "response_mean_ms": 2155,
+    "barge_in_median_ms": 674.0,
+    "greeting_median_ms": 3008.0
+  },
+  "runs": [
+    {
+      "run_id": "happy_path-deepgram-sarvam-8844b2",
+      "pipeline": "deepgram-sarvam",
+      "script": "happy_path",
+      "greeting_ms": 3210,
+      "turns": [
+        {
+          "text": "हाँ, मैं रोहन बोल रहा हूँ।",
+          "response_ms": 1420,
+          "barge_in_ms": null
+        },
+        {
+          "text": "हाँ हाँ, order sahi hai, paneer butter masala aur naan.",
+          "response_ms": 1784,
+          "barge_in_ms": null
+        }
+      ],
+      "ended_early": true
+    },
+    {
+      "run_id": "cancel_dnd-deepgram-sarvam-b6d6a9",
+      "pipeline": "deepgram-sarvam",
+      "script": "cancel_dnd",
+      "greeting_ms": 2607,
+      "turns": [
+        {
+          "text": "Haan bolo, kaun?",
+          "response_ms": 1210,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Maine koi order nahi kiya, ye galti se ho gaya, cancel कर दो।",
+          "response_ms": 1547,
+          "barge_in_ms": 723
+        },
+        {
+          "text": "और please मुझे दोबारा call मत करना।",
+          "response_ms": null,
+          "barge_in_ms": null
+        }
+      ]
+    },
+    {
+      "run_id": "reschedule_prepaid-deepgram-sarvam-a7d5ae",
+      "pipeline": "deepgram-sarvam",
+      "script": "reschedule_prepaid",
+      "greeting_ms": 3393,
+      "turns": [
+        {
+          "text": "हाँ जी, बोलिए।",
+          "response_ms": 1307,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Aaj ghar pe koi nahi hoga, kal subah dus baje bhej sakte ho?",
+          "response_ms": 2281,
+          "barge_in_ms": null
+        },
+        {
+          "text": "UPI se pay karne pe discount milega? Theek hai, link bhej do.",
+          "response_ms": 2234,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Bas itna hi, thanks.",
+          "response_ms": null,
+          "barge_in_ms": null
+        }
+      ]
+    },
+    {
+      "run_id": "happy_path-deepgram-sarvam-52f5d1",
+      "pipeline": "deepgram-sarvam",
+      "script": "happy_path",
+      "turns": [
+        {
+          "text": "हाँ, मैं रोहन बोल रहा हूँ।",
+          "response_ms": 1736,
+          "barge_in_ms": null
+        },
+        {
+          "text": "हाँ हाँ, order sahi hai, paneer butter masala aur naan.",
+          "response_ms": 6374,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Address bhi correct hai, बस landmark add कर दो, Total petrol pump के पास।",
+          "response_ms": 2036,
+          "barge_in_ms": null
+        },
+        {
+          "text": "नहीं, cash ही दूँगा, UPI नहीं चाहिए।",
+          "response_ms": 1432,
+          "barge_in_ms": null
+        },
+        {
+          "text": "हाँ, confirm कर दो। Thank you.",
+          "response_ms": 2199,
+          "barge_in_ms": null
+        }
+      ],
+      "greeting_ms": 3008
+    },
+    {
+      "run_id": "cancel_dnd-deepgram-sarvam-fc1a59",
+      "pipeline": "deepgram-sarvam",
+      "script": "cancel_dnd",
+      "turns": [
+        {
+          "text": "Haan bolo, kaun?",
+          "response_ms": 1778,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Maine koi order nahi kiya, ye galti se ho gaya, cancel कर दो।",
+          "response_ms": 1358,
+          "barge_in_ms": 625
+        },
+        {
+          "text": "और please मुझे दोबारा call मत करना।",
+          "response_ms": 2839,
+          "barge_in_ms": null
+        }
+      ],
+      "greeting_ms": 3008
+    },
+    {
+      "run_id": "reschedule_prepaid-deepgram-sarvam-6473ac",
+      "pipeline": "deepgram-sarvam",
+      "script": "reschedule_prepaid",
+      "turns": [
+        {
+          "text": "हाँ जी, बोलिए।",
+          "response_ms": 1422,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Aaj ghar pe koi nahi hoga, kal subah dus baje bhej sakte ho?",
+          "response_ms": 2360,
+          "barge_in_ms": null
+        },
+        {
+          "text": "UPI se pay karne pe discount milega? Theek hai, link bhej do.",
+          "response_ms": 3465,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Bas itna hi, thanks.",
+          "response_ms": null,
+          "barge_in_ms": null
+        }
+      ],
+      "greeting_ms": 2979
+    }
+  ]
+}

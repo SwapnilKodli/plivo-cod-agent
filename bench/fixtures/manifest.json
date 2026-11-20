@@ -1,0 +1,57 @@
+{
+  "happy_path": [
+    {
+      "text": "हाँ, मैं रोहन बोल रहा हूँ।",
+      "file": "happy_path_0.ulaw"
+    },
+    {
+      "text": "हाँ हाँ, order sahi hai, paneer butter masala aur naan.",
+      "file": "happy_path_1.ulaw"
+    },
+    {
+      "text": "Address bhi correct hai, बस landmark add कर दो, Total petrol pump के पास।",
+      "file": "happy_path_2.ulaw"
+    },
+    {
+      "text": "नहीं, cash ही दूँगा, UPI नहीं चाहिए।",
+      "file": "happy_path_3.ulaw"
+    },
+    {
+      "text": "हाँ, confirm कर दो। Thank you.",
+      "file": "happy_path_4.ulaw"
+    }
+  ],
+  "cancel_dnd": [
+    {
+      "text": "Haan bolo, kaun?",
+      "file": "cancel_dnd_0.ulaw"
+    },
+    {
+      "text": "Maine koi order nahi kiya, ye galti se ho gaya, cancel कर दो।",
+      "barge_in": true,
+      "file": "cancel_dnd_1.ulaw"
+    },
+    {
+      "text": "और please मुझे दोबारा call मत करना।",
+      "file": "cancel_dnd_2.ulaw"
+    }
+  ],
+  "reschedule_prepaid": [
+    {
+      "text": "हाँ जी, बोलिए।",
+      "file": "reschedule_prepaid_0.ulaw"
+    },
+    {
+      "text": "Aaj ghar pe koi nahi hoga, kal subah dus baje bhej sakte ho?",
+      "file": "reschedule_prepaid_1.ulaw"
+    },
+    {
+      "text": "UPI se pay karne pe discount milega? Theek hai, link bhej do.",
+      "file": "reschedule_prepaid_2.ulaw"
+    },
+    {
+      "text": "Bas itna hi, thanks.",
+      "file": "reschedule_prepaid_3.ulaw"
+    }
+  ]
+}

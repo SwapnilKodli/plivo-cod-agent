@@ -1,0 +1,99 @@
+{
+  "summary": {
+    "pipeline": "sarvam-sarvam",
+    "turns": 10,
+    "response_p50_ms": 2573,
+    "response_p90_ms": 2969,
+    "response_mean_ms": 2708,
+    "barge_in_median_ms": 651,
+    "greeting_median_ms": 2093
+  },
+  "runs": [
+    {
+      "run_id": "happy_path-sarvam-sarvam-c88468",
+      "pipeline": "sarvam-sarvam",
+      "script": "happy_path",
+      "turns": [
+        {
+          "text": "हाँ, मैं रोहन बोल रहा हूँ।",
+          "response_ms": 2094,
+          "barge_in_ms": null
+        },
+        {
+          "text": "हाँ हाँ, order sahi hai, paneer butter masala aur naan.",
+          "response_ms": 2397,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Address bhi correct hai, बस landmark add कर दो, Total petrol pump के पास।",
+          "response_ms": 2800,
+          "barge_in_ms": null
+        },
+        {
+          "text": "नहीं, cash ही दूँगा, UPI नहीं चाहिए।",
+          "response_ms": 2573,
+          "barge_in_ms": null
+        },
+        {
+          "text": "हाँ, confirm कर दो। Thank you.",
+          "response_ms": null,
+          "barge_in_ms": null,
+          "note": "stale timing dropped"
+        }
+      ],
+      "greeting_ms": 2093
+    },
+    {
+      "run_id": "cancel_dnd-sarvam-sarvam-360af3",
+      "pipeline": "sarvam-sarvam",
+      "script": "cancel_dnd",
+      "turns": [
+        {
+          "text": "Haan bolo, kaun?",
+          "response_ms": 2612,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Maine koi order nahi kiya, ye galti se ho gaya, cancel कर दो।",
+          "response_ms": 2969,
+          "barge_in_ms": 651
+        },
+        {
+          "text": "और please मुझे दोबारा call मत करना।",
+          "response_ms": null,
+          "barge_in_ms": null,
+          "note": "stale timing dropped"
+        }
+      ],
+      "greeting_ms": 2782
+    },
+    {
+      "run_id": "reschedule_prepaid-sarvam-sarvam-cca5a8",
+      "pipeline": "sarvam-sarvam",
+      "script": "reschedule_prepaid",
+      "turns": [
+        {
+          "text": "हाँ जी, बोलिए।",
+          "response_ms": 2484,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Aaj ghar pe koi nahi hoga, kal subah dus baje bhej sakte ho?",
+          "response_ms": 3736,
+          "barge_in_ms": null
+        },
+        {
+          "text": "UPI se pay karne pe discount milega? Theek hai, link bhej do.",
+          "response_ms": 2856,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Bas itna hi, thanks.",
+          "response_ms": 2560,
+          "barge_in_ms": null
+        }
+      ],
+      "greeting_ms": 1568
+    }
+  ]
+}

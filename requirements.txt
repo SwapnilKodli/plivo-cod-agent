@@ -1,0 +1,7 @@
+pipecat-ai[websocket,silero,deepgram,groq,google,sarvam,runner]==1.16.0
+fastapi
+uvicorn
+python-dotenv
+aiohttp
+requests
+websockets

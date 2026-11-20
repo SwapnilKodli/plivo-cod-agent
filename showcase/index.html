@@ -1,0 +1,325 @@
+<title>Riya COD Agent</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~880px) of stacked sections; the call itself (audio + transcript) leads, engineering detail follows. */
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --ink: #17201c;
+  --muted: #5d6a63;
+  --line: #dde3de;
+  --accent: #0f7a5c;      /* phone-line green */
+  --accent-soft: #e2f1eb;
+  --warm: #b8641a;        /* marigold, for the caller side */
+  --warm-soft: #f8ecdf;
+  --bad: #b03a2e;
+  --bad-soft: #f7e3e0;
+  --code-bg: #eef1ee;
+  --f-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Inter", "Noto Sans Devanagari", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --f-deva: "Noto Sans Devanagari", "Inter", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111613; --surface: #18201c; --ink: #e6ece8; --muted: #9aa8a0; --line: #2a352f;
+  --accent: #4cc39b; --accent-soft: #173229; --warm: #e39a55; --warm-soft: #33261a;
+  --bad: #ec7f72; --bad-soft: #3a201d; --code-bg: #1d2622; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #111613; --surface: #18201c; --ink: #e6ece8; --muted: #9aa8a0; --line: #2a352f;
+  --accent: #4cc39b; --accent-soft: #173229; --warm: #e39a55; --warm-soft: #33261a;
+  --bad: #ec7f72; --bad-soft: #3a201d; --code-bg: #1d2622; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 880px; margin: 0 auto; padding-block: 48px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 64px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.1rem; font-weight: 500; }
+p { margin: 0; max-width: 68ch; }
+section { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+code, .mono { font-family: var(--f-mono); font-size: 0.85em; }
+a { color: var(--accent); }
+
+/* Hero */
+.hero { display: flex; flex-direction: column; gap: 18px; }
+.hero .lede { font-size: 1.15rem; color: var(--muted); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--f-mono); font-size: 0.78rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); white-space: nowrap; }
+.callout { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 14px 16px; font-size: 0.92rem; color: var(--muted); }
+.callout strong { color: var(--ink); }
+
+/* Players */
+.players { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+.player { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.player .meta { font-family: var(--f-mono); font-size: 0.75rem; color: var(--muted); }
+.player audio { width: 100%; }
+.player p { font-size: 0.9rem; color: var(--muted); }
+
+/* Transcript */
+.transcript { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 0; }
+.turn { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 10px 16px; align-items: baseline; }
+.turn + .turn { border-top: 1px solid var(--line); }
+.who { font-family: var(--f-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.who.agent { color: var(--accent); }
+.who.caller { color: var(--warm); }
+.who.tool { color: var(--muted); }
+.said { font-family: var(--f-deva); min-width: 0; }
+.tool-call { font-family: var(--f-mono); font-size: 0.82rem; background: var(--accent-soft); color: var(--ink); padding: 2px 8px; border-radius: 6px; display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+.lat { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); margin-left: 8px; white-space: nowrap; }
+
+/* Architecture */
+.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.diagram svg { display: block; min-width: 640px; width: 100%; height: auto; }
+.diagram text { font-family: var(--f-body); fill: var(--ink); }
+.diagram .lbl { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
+.diagram .box { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+.diagram .box.hl { fill: var(--accent-soft); stroke: var(--accent); }
+.diagram .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+.diagram .ah { fill: var(--muted); }
+
+/* Cards of built pieces */
+.pieces { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.piece { border-top: 2px solid var(--accent); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.piece .path { font-family: var(--f-mono); font-size: 0.75rem; color: var(--muted); }
+.piece p { font-size: 0.92rem; }
+
+pre { background: var(--code-bg); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.8rem; line-height: 1.55; margin: 0; }
+pre .c { color: var(--muted); }
+pre .k { color: var(--accent); }
+
+/* Benchmark */
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 0.92rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-family: var(--f-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+td.num { text-align: right; font-family: var(--f-mono); }
+th.num { text-align: right; }
+.bars { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 150px 1fr 70px; gap: 12px; align-items: center; font-size: 0.85rem; }
+.bar-row .name { font-family: var(--f-mono); font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { height: 14px; background: var(--code-bg); border-radius: 4px; position: relative; }
+.bar-fill { height: 100%; border-radius: 4px; background: var(--accent); }
+.bar-row .v { font-family: var(--f-mono); text-align: right; font-size: 0.8rem; }
+.pending { color: var(--muted); font-style: italic; }
+
+/* Findings */
+.findings { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.finding { display: grid; grid-template-columns: 92px 1fr; gap: 14px; padding: 14px 16px; }
+.finding + .finding { border-top: 1px solid var(--line); }
+.status { font-family: var(--f-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 6px; height: fit-content; text-align: center; }
+.status.fixed { background: var(--accent-soft); color: var(--accent); }
+.status.open { background: var(--bad-soft); color: var(--bad); }
+.status.next { background: var(--warm-soft); color: var(--warm); }
+.finding p { font-size: 0.93rem; }
+.finding p + p { margin-top: 4px; }
+
+ol.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; max-width: 68ch; }
+footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 20px; }
+
+@media (max-width: 560px) {
+  .turn { grid-template-columns: 1fr; gap: 2px; }
+  .finding { grid-template-columns: 1fr; gap: 8px; }
+  .bar-row { grid-template-columns: 110px 1fr 56px; }
+}
+.bar-track.stack { display: flex; overflow: hidden; }
+.bar-track.stack .seg { height: 100%; }
+.bar-track.stack .seg + .seg { border-left: 2px solid var(--surface); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.8rem; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">Voice AI demo · built for Plivo</span>
+  <h1>Riya: a Hinglish agent that confirms cash-on-delivery orders</h1>
+  <p class="lede">Before a COD order ships, Riya calls the customer, reads back the order and address, offers ₹20 off to pay by UPI now, and records a decision: confirm, cancel, reschedule, or never call again. Orders refused at the door (RTO) are one of the biggest costs for Indian food and D2C brands, and this call is one of the most common voice-AI jobs on Plivo.</p>
+  <div class="facts">
+    <span class="chip">Plivo Audio Streams</span>
+    <span class="chip">Pipecat 1.16</span>
+    <span class="chip">Koyal TTS service (new)</span>
+    <span class="chip">Sarvam · Deepgram · Groq · Gemini Live</span>
+    <span class="chip">7 tools</span>
+    <span class="chip">~1,200 lines of Python</span>
+  </div>
+</header>
+
+<section id="listen">
+  <span class="eyebrow">Listen</span>
+  <h2>Three recorded calls</h2>
+  <p class="muted">Recorded at phone quality (8 kHz μ-law). The customer is a scripted, synthetic voice. The server receives exactly what Plivo would send on a live call; only the phone network is skipped.</p>
+  <div class="players">
+    <div class="player">
+      <span class="meta">happy path · Sarvam → Groq → Sarvam</span>
+      <h3>Confirms, adds a landmark, declines UPI</h3>
+      <audio controls preload="metadata" src="audio/happy-cascade.wav"></audio>
+      <p>The cascaded stack: speech-to-text, LLM, then text-to-speech. Koyal plugs into the last slot.</p>
+    </div>
+    <div class="player">
+      <span class="meta">happy path · Gemini Live</span>
+      <h3>Same call, speech-to-speech</h3>
+      <audio controls preload="metadata" src="audio/happy-gemini.wav"></audio>
+      <p>One model hears and speaks. Faster, but less control over the voice and language.</p>
+    </div>
+    <div class="player">
+      <span class="meta">cancel + do-not-call · Sarvam → Groq → Sarvam</span>
+      <h3>Caller interrupts, cancels, opts out</h3>
+      <audio controls preload="metadata" src="audio/cancel-dnd.wav"></audio>
+      <p>The caller talks over Riya. She stops, cancels the order and adds the number to the do-not-call list.</p>
+    </div>
+  </div>
+</section>
+
+<section id="transcript">
+  <span class="eyebrow">Transcript</span>
+  <h2>The happy-path call, turn by turn</h2>
+  <p class="muted">Taken from the server log of the first recording above. The grey figure is how long the caller waited for that reply. The struck-out line was spoken in this recording; it is filtered out now. Tool calls are the agent's actions; they write to the order log, not just the conversation.</p>
+  <div class="transcript" id="transcript-body">
+    <div class="turn"><span class="who agent">Riya</span><div class="said">नमस्ते रोहन जी, मैं Riya बोल रही हूँ, आपके चार सौ छियासी रुपये के COD order के बारे में कॉल किया था। क्या आप इस order की पुष्टि करना चाहेंगे?</div></div>
+    <div class="turn"><span class="who caller">Caller</span><div class="said">हाँ, मैं रोहन बोल रहा हूँ।</div></div>
+    <div class="turn"><span class="who agent">Riya</span><div class="said">आपके order में Paneer Butter Masala, 2 Butter Naan और Gulab Jamun हैं, और delivery आज शाम 7 से 8 बजे तय है। क्या यह सही है?<span class="lat">2,094 ms</span></div></div>
+    <div class="turn"><span class="who caller">Caller</span><div class="said">हाँ हाँ, order sahi hai, paneer butter masala aur naan.</div></div>
+    <div class="turn"><span class="who agent">Riya</span><div class="said">आपका delivery address है: Flat 302, Sai Residency, HSR Layout Sector 2, Bengaluru. क्या यह सही है? यदि आप चाहें तो UPI से अभी पेमेंट करके 20 रुपये की छूट ले सकते हैं। क्या आप अभी प्री‑पे करना चाहेंगे? <s class="muted" title="Spoken in this recording; now filtered out">(Waiting for customer response)</s><span class="lat">2,397 ms</span></div></div>
+    <div class="turn"><span class="who caller">Caller</span><div class="said">Address bhi correct hai, बस landmark add कर दो, Total petrol pump के पास।</div></div>
+    <div class="turn"><span class="who tool">Action</span><div class="said"><span class="tool-call">update_address(correction="टोटल पेट्रोल पंप के पास")</span></div></div>
+    <div class="turn"><span class="who agent">Riya</span><div class="said">ठीक है, टोटल पेट्रोल पंप के पास आपका landmark जोड़ दिया गया है। अगर आप अभी UPI से पेमेंट करके 20 रुपये की छूट लेना चाहते हैं तो बताइए, नहीं तो आपके COD के साथ आगे बढ़ते हैं।<span class="lat">2,800 ms</span></div></div>
+    <div class="turn"><span class="who caller">Caller</span><div class="said">नहीं, cash ही दूँगा, UPI नहीं चाहिए।</div></div>
+    <div class="turn"><span class="who tool">Action</span><div class="said"><span class="tool-call">confirm_order()</span></div></div>
+    <div class="turn"><span class="who agent">Riya</span><div class="said">धन्यवाद रोहन जी, आपका COD order पुष्टि हो गया है। आपका order आज शाम 7‑8 बजे पहुँच जाएगा।<span class="lat">2,573 ms</span></div></div>
+    <div class="turn"><span class="who caller">Caller</span><div class="said">हाँ, confirm कर दो। Thank you.</div></div>
+    <div class="turn"><span class="who tool">Action</span><div class="said"><span class="tool-call">end_call()</span></div></div>
+    <div class="turn"><span class="who agent">Riya</span><div class="said">फिर मिलते हैं, अलविदा!</div></div>
+  </div>
+</section>
+
+<section id="architecture">
+  <span class="eyebrow">How it works</span>
+  <h2>One WebSocket per call</h2>
+  <p>Plivo dials the customer, fetches <code>/answer</code>, and opens a bidirectional audio stream to the server. Pipecat runs the pipeline for that call. Every speech stack sits behind the same transport, so swapping one is a config change.</p>
+  <div class="diagram" role="img" aria-label="Call flow: Plivo streams caller audio to the server; speech-to-text, LLM with tools, and text-to-speech produce audio that goes back to Plivo.">
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+      <rect class="box" x="10" y="80" width="120" height="70" rx="10"/>
+      <text x="70" y="112" text-anchor="middle" font-weight="600">Customer</text>
+      <text class="lbl" x="70" y="132" text-anchor="middle">phone (PSTN)</text>
+      <rect class="box" x="170" y="80" width="120" height="70" rx="10"/>
+      <text x="230" y="112" text-anchor="middle" font-weight="600">Plivo</text>
+      <text class="lbl" x="230" y="132" text-anchor="middle">Audio Stream</text>
+      <path class="arrow" d="M130 115 H168" marker-end="url(#ah)"/>
+      <path class="arrow" d="M290 115 H330" marker-end="url(#ah)"/>
+      <text class="lbl" x="310" y="104" text-anchor="middle">WS</text>
+      <rect class="box" x="332" y="20" width="418" height="210" rx="12" fill-opacity="0.4"/>
+      <text class="lbl" x="346" y="40">FastAPI /ws · Pipecat pipeline (per call)</text>
+      <rect class="box" x="350" y="60" width="110" height="56" rx="8"/>
+      <text x="405" y="86" text-anchor="middle" font-size="13" font-weight="600">STT</text>
+      <text class="lbl" x="405" y="104" text-anchor="middle">Sarvam codemix</text>
+      <rect class="box" x="490" y="60" width="110" height="56" rx="8"/>
+      <text x="545" y="86" text-anchor="middle" font-size="13" font-weight="600">LLM + tools</text>
+      <text class="lbl" x="545" y="104" text-anchor="middle">Groq</text>
+      <rect class="box hl" x="630" y="60" width="108" height="56" rx="8"/>
+      <text x="684" y="86" text-anchor="middle" font-size="13" font-weight="600">TTS</text>
+      <text class="lbl" x="684" y="104" text-anchor="middle">Koyal / Sarvam</text>
+      <path class="arrow" d="M460 88 H488" marker-end="url(#ah)"/>
+      <path class="arrow" d="M600 88 H628" marker-end="url(#ah)"/>
+      <path class="arrow" d="M684 116 V190 H232 V152" marker-end="url(#ah)"/>
+      <text class="lbl" x="460" y="206" text-anchor="middle">playAudio / clearAudio (barge-in)</text>
+      <rect class="box" x="490" y="136" width="110" height="40" rx="8"/>
+      <text class="lbl" x="545" y="161" text-anchor="middle">order log · DND · SMS</text>
+      <path class="arrow" d="M545 116 V134" marker-end="url(#ah)"/>
+    </svg>
+  </div>
+</section>
+
+<section id="built">
+  <span class="eyebrow">What's in the repo</span>
+  <h2>Four pieces</h2>
+  <div class="pieces">
+    <div class="piece">
+      <span class="path">pipecat_koyal/tts.py</span>
+      <h3>Koyal for Pipecat</h3>
+      <p>Plivo launched Koyal on 18 Nov; Pipecat had no integration. This streams over Koyal's realtime WebSocket, maps each agent turn to a Koyal context, and cancels it server-side on barge-in. Written as an upstream PR.</p>
+    </div>
+    <div class="piece">
+      <span class="path">app/agent.py</span>
+      <h3>Hinglish agent, 7 tools</h3>
+      <p>Hindi in Devanagari, English words in Latin script, the way Indian support agents talk. Tools: confirm, cancel, reschedule, fix address, UPI link by SMS, do-not-call, hang up.</p>
+    </div>
+    <div class="piece">
+      <span class="path">app/orders.py</span>
+      <h3>Guardrails in code</h3>
+      <p>The 9 am to 9 pm IST calling window and the do-not-call list are checked before dialing, so the model can't talk its way past them. Every decision goes to an outcome log.</p>
+    </div>
+    <div class="piece">
+      <span class="path">bench/</span>
+      <h3>Replay benchmark</h3>
+      <p>Pretends to be Plivo: streams the same scripted caller into each speech stack at real-time pace and times the reply on the wire. Free and repeatable, and it records every call.</p>
+    </div>
+  </div>
+<pre><span class="c"># pipecat_koyal/tts.py: barge-in stops Koyal at the source, not just the playback</span>
+<span class="k">async def</span> on_audio_context_interrupted(self, context_id: str):
+    await self.stop_all_metrics()
+    <span class="k">if</span> context_id <span class="k">and</span> self._websocket <span class="k">and</span> context_id <span class="k">in</span> self._opened_contexts:
+        await self._websocket.send(json.dumps({<span class="k">"type"</span>: <span class="k">"cancel"</span>, <span class="k">"context_id"</span>: context_id}))
+    await super().on_audio_context_interrupted(context_id)</pre>
+</section>
+
+<section id="benchmark">
+  <span class="eyebrow">Benchmark</span>
+  <h2>How long the caller waits</h2>
+  <p>Response time is measured from the end of the caller's speech to the first audio frame back on the wire, the gap a caller actually hears. Three scripted calls per stack, run one stack at a time from a laptop, with every model called over its public API.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Stack</th><th class="num">Median reply</th><th class="num">p90 reply</th><th class="num">Stops on interrupt</th><th class="num">First words</th><th class="num">Turns</th></tr></thead><tbody>
+<tr><td>Gemini Live (speech-to-speech)<br><span class="mono muted small">gemini-live</span></td><td class="num">1,452 ms</td><td class="num">1,587 ms</td><td class="num">428 ms</td><td class="num">2,672 ms</td><td class="num">8</td></tr>
+<tr><td>Deepgram → Groq → Sarvam<br><span class="mono muted small">deepgram-sarvam</span></td><td class="num">1,778 ms</td><td class="num">2,839 ms</td><td class="num">674 ms</td><td class="num">3,008 ms</td><td class="num">18</td></tr>
+<tr><td>Sarvam → Groq → Sarvam<br><span class="mono muted small">sarvam-sarvam</span></td><td class="num">2,573 ms</td><td class="num">2,969 ms</td><td class="num">651 ms</td><td class="num">2,093 ms</td><td class="num">10</td></tr>
+<tr><td>Sarvam → Groq → Plivo Koyal<br><span class="mono muted small">sarvam-koyal</span></td><td class="num pending" colspan="5">needs Plivo credentials</td></tr>
+<tr><td>Deepgram → Groq → Plivo Koyal<br><span class="mono muted small">deepgram-koyal</span></td><td class="num pending" colspan="5">needs Plivo credentials</td></tr>
+</tbody></table></div>
+<h3>Where the time goes</h3>
+<p class="muted small">Median time each service takes to start producing output in a turn, from the server's own metrics. Same LLM and voice in both cascades; only speech-to-text changes.</p>
+<div class="bars" role="img" aria-label="Sarvam speech-to-text 1405 ms, LLM 435 ms, voice 193 ms. Deepgram speech-to-text 507 ms, LLM 372 ms, voice 199 ms. Gemini Live 911 ms.">
+<div class="bar-row"><span class="name">Sarvam → Groq → Sarvam</span><div class="bar-track stack"><div class="seg" style="width:46.8%;background:var(--warm)" title="speech-to-text: 1405 ms"></div><div class="seg" style="width:14.5%;background:var(--accent)" title="LLM: 435 ms"></div><div class="seg" style="width:6.4%;background:var(--muted)" title="voice: 193 ms"></div></div><span class="v">2,033 ms</span></div>
+<div class="bar-row"><span class="name">Deepgram → Groq → Sarvam</span><div class="bar-track stack"><div class="seg" style="width:16.9%;background:var(--warm)" title="speech-to-text: 507 ms"></div><div class="seg" style="width:12.4%;background:var(--accent)" title="LLM: 372 ms"></div><div class="seg" style="width:6.6%;background:var(--muted)" title="voice: 199 ms"></div></div><span class="v">1,078 ms</span></div>
+<div class="bar-row"><span class="name">Gemini Live</span><div class="bar-track stack"><div class="seg" style="width:30.4%;background:var(--accent)" title="one model: 911 ms"></div></div><span class="v">911 ms</span></div>
+</div><div class="legend"><span><i style="background:var(--warm)"></i>speech-to-text</span><span><i style="background:var(--accent)"></i>LLM (or Gemini end to end)</span><span><i style="background:var(--muted)"></i>voice (TTS)</span></div>
+<div class="callout"><strong>What this says about Koyal.</strong> In the cascaded stacks the voice is the smallest slice (about 0.2 s). Speech-to-text is the biggest lever: switching Sarvam to Deepgram cut the median reply by about 0.8 s with everything else unchanged. Koyal's job in this stack is to sound right in Hinglish and start fast. The STT choice decides whether the call feels quick.</div>
+<p class="muted small">Small sample: one run of each script per stack (two for Deepgram), 8 to 18 measured turns. Turns where the agent had already hung up are excluded. Raw data: <span class="mono">bench/results/*.json</span>.</p>
+</section>
+
+<section id="findings">
+  <span class="eyebrow">What testing turned up</span>
+  <h2>Found, fixed, and still open</h2>
+  <div class="findings">
+    <div class="finding"><span class="status fixed">fixed</span><div><p><strong>Agent kept talking after hanging up.</strong> After <code>end_call</code>, the LLM was asked for another reply and said "Call end." out loud. The end-call result now skips the follow-up LLM run.</p></div></div>
+    <div class="finding"><span class="status fixed">fixed</span><div><p><strong>Empty address updates.</strong> On "address is fine", the model called <code>update_address</code> with no correction. The tool now rejects empty corrections and tells the model the address is unchanged.</p></div></div>
+    <div class="finding"><span class="status fixed">fixed</span><div><p><strong>Benchmark measured stale turns and could hang.</strong> When the agent hung up before the script ended, the harness reused the previous turn's timing, and once waited forever on a closed socket. It now resets timing each turn and stops when the call closes.</p></div></div>
+    <div class="finding"><span class="status fixed">fixed</span><div><p><strong>Gemini Live never spoke first.</strong> Realtime models wait for a user turn. The call now opens with a one-line kickoff message.</p></div></div>
+    <div class="finding"><span class="status fixed">fixed</span><div><p><strong>Stage directions spoken aloud.</strong> Groq's gpt-oss sometimes writes <code>(end_call)</code> or <code>(Waiting for customer response)</code> as text, and the voice read it out. A transform now removes parenthesized text and tool names before anything reaches TTS.</p></div></div>
+    <div class="finding"><span class="status open">open</span><div><p><strong>Code-mixed speech-to-text slips.</strong> Sarvam heard "galti se ho gaya, cancel kar do" as the reason "Kabulo cone." The decision was right, but the logged reason was wrong. Worth checking against real caller audio.</p></div></div>
+    <div class="finding"><span class="status open">open</span><div><p><strong>Grammatical gender.</strong> Riya once said "पढ़ लेता हूँ" (masculine). Hindi verb gender should follow the agent's persona; a prompt rule and a regression check would catch it.</p></div></div>
+    <div class="finding"><span class="status next">next</span><div><p><strong>Koyal numbers.</strong> The Koyal service is written and its message format is unit-checked, but these benchmark runs used Sarvam's voice because they ran without a Plivo account. With Plivo credentials, the Koyal stacks run unchanged.</p></div></div>
+  </div>
+</section>
+
+<section id="next">
+  <span class="eyebrow">Next</span>
+  <h2>With a Plivo account</h2>
+  <ol class="steps">
+    <li>Run the two Koyal stacks through the same benchmark and compare against Sarvam's voice.</li>
+    <li>Place real PSTN calls to measure the carrier leg on top of pipeline latency.</li>
+    <li>Open the Koyal service as a PR to Pipecat, with the protocol checked against the live API.</li>
+    <li>Swap the synthetic caller for recorded human clips, which are noisier and more realistic.</li>
+  </ol>
+</section>
+
+<footer>Built by Swapnil Kodliwadmath, November 2026. Code: <span class="mono">plivo-cod-agent/</span> (Python, Pipecat 1.16). The order data is mock data.</footer>
+</div>

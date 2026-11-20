@@ -1,0 +1,96 @@
+{
+  "summary": {
+    "pipeline": "gemini-live",
+    "turns": 8,
+    "response_p50_ms": 1452,
+    "response_p90_ms": 1587,
+    "response_mean_ms": 1315,
+    "barge_in_median_ms": 428,
+    "greeting_median_ms": 2672
+  },
+  "runs": [
+    {
+      "run_id": "happy_path-gemini-live-6b7fa0",
+      "pipeline": "gemini-live",
+      "script": "happy_path",
+      "turns": [
+        {
+          "text": "हाँ, मैं रोहन बोल रहा हूँ।",
+          "response_ms": 900,
+          "barge_in_ms": null
+        },
+        {
+          "text": "हाँ हाँ, order sahi hai, paneer butter masala aur naan.",
+          "response_ms": 962,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Address bhi correct hai, बस landmark add कर दो, Total petrol pump के पास।",
+          "response_ms": 1452,
+          "barge_in_ms": null
+        },
+        {
+          "text": "नहीं, cash ही दूँगा, UPI नहीं चाहिए।",
+          "response_ms": 1560,
+          "barge_in_ms": null
+        },
+        {
+          "text": "हाँ, confirm कर दो। Thank you.",
+          "response_ms": null,
+          "barge_in_ms": null,
+          "note": "stale timing dropped"
+        }
+      ],
+      "greeting_ms": 2501
+    },
+    {
+      "run_id": "cancel_dnd-gemini-live-5d6b8f",
+      "pipeline": "gemini-live",
+      "script": "cancel_dnd",
+      "turns": [
+        {
+          "text": "Haan bolo, kaun?",
+          "response_ms": 1322,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Maine koi order nahi kiya, ye galti se ho gaya, cancel कर दो।",
+          "response_ms": 1645,
+          "barge_in_ms": 428
+        },
+        {
+          "text": "और please मुझे दोबारा call मत करना।",
+          "response_ms": null,
+          "barge_in_ms": null,
+          "note": "stale timing dropped"
+        }
+      ],
+      "greeting_ms": 3098
+    },
+    {
+      "run_id": "reschedule_prepaid-gemini-live-51bb0b",
+      "pipeline": "gemini-live",
+      "script": "reschedule_prepaid",
+      "turns": [
+        {
+          "text": "हाँ जी, बोलिए।",
+          "response_ms": 1092,
+          "barge_in_ms": null
+        },
+        {
+          "text": "Aaj ghar pe koi nahi hoga, kal subah dus baje bhej sakte ho?",
+          "response_ms": 1587,
+          "barge_in_ms": null
+        },
+        {
+          "text": "UPI se pay karne pe discount milega? Theek hai, link bhej do.",
+          "response_ms": null,
+          "barge_in_ms": null,
+          "note": "stale timing dropped"
+        }
+      ],
+      "greeting_ms": 2672,
+      "ended_early": true
+    }
+  ]
+}
